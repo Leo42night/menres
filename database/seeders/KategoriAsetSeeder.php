@@ -17,7 +17,7 @@ class KategoriAsetSeeder extends Seeder
 
         foreach ($kategoriAsetData as $kategori) {
             KategoriAsetKritis::create([
-                'nama_kategori' => $kategori,
+                'name' => $kategori,
             ]);
         }
     }

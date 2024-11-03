@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('informasi_aset_kritis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_kategori')->constrained('kategori_aset_kritis')->onDelete('cascade');
-            $table->string('nama_aset', 255);
+            $table->string('name', 255);
             $table->string('deskripsi', 500);
             $table->timestamps();
         });

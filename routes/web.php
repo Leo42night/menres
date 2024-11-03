@@ -2,13 +2,9 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Api\DataController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OperatorController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RiskController;
 use App\Http\Controllers\RiskOwnerController;
-use App\Http\Controllers\ShopController;
-use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +25,10 @@ Route::controller(DataController::class)->group(function () {
     // datatable of users and 2 button type for witdh screen   
     Route::get('/data/user-big', 'usersBig')->name('data.user-big');
     Route::get('/data/user-small', 'usersSmall')->name('data.user-small');
+
+    Route::get('/data/category', 'categories')->name('data.category');
+    Route::get('/data/asset', 'assets')->name('data.assets');
+    Route::get('/data/requirement', 'requirements')->name('data.requirements');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -57,15 +57,18 @@ Route::middleware(['auth'])->group(function () {
     // Operator Routes
     Route::middleware(['role:operator'])->group(function () {
         Route::get('/assets/categories', [OperatorController::class, 'manageAssetCategories'])->name('operator.asset.categories');
-        Route::post('/assets/categories/edit/{id}', [OperatorController::class, 'editAssetCategory'])->name('operator.asset.categories.edit');
+        Route::post('/assets/categories/create', [OperatorController::class, 'storeAssetCategory'])->name('operator.asset.categories.create');
+        Route::put('/assets/categories/edit/{id}', [OperatorController::class, 'updateAssetCategory'])->name('operator.asset.categories.edit');
         Route::delete('/assets/categories/delete/{id}', [OperatorController::class, 'deleteAssetCategory'])->name('operator.asset.categories.delete');
 
         Route::get('/assets', [OperatorController::class, 'manageAssets'])->name('operator.assets');
-        Route::post('/assets/edit/{id}', [OperatorController::class, 'editAsset'])->name('operator.assets.edit');
+        Route::post('/assets/create', [OperatorController::class, 'storeAsset'])->name('operator.assets.create');
+        Route::put('/assets/edit/{id}', [OperatorController::class, 'updateAsset'])->name('operator.assets.edit');
         Route::delete('/assets/delete/{id}', [OperatorController::class, 'deleteAsset'])->name('operator.assets.delete');
 
         Route::get('/security-requirements', [OperatorController::class, 'manageSecurityRequirements'])->name('operator.security.requirements');
-        Route::post('/security-requirements/edit/{id}', [OperatorController::class, 'editSecurityRequirement'])->name('operator.security.requirements.edit');
+        Route::post('/security-requirements/create', [OperatorController::class, 'stroreSecurityRequirement'])->name('operator.security.requirements.create');
+        Route::put('/security-requirements/edit/{id}', [OperatorController::class, 'updateSecurityRequirement'])->name('operator.security.requirements.edit');
         Route::delete('/security-requirements/delete/{id}', [OperatorController::class, 'deleteSecurityRequirement'])->name('operator.security.requirements.delete');
     });
 

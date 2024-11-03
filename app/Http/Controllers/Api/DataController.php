@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\InformasiAsetKritis;
+use App\Models\KategoriAsetKritis;
+use App\Models\PersyaratanKeamanan;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -9,47 +12,6 @@ use Spatie\Permission\Models\Role;
 
 class DataController extends Controller
 {
-    //untuk searching product by location
-    public function index($productID)
-    {
-
-        try {
-            // Query to get the data
-            $places = DB::table('transactions')
-                ->join('products', 'transactions.prod_id', '=', 'products.id')
-                ->join('shops', 'transactions.shop_id', '=', 'shops.id')
-                ->select(
-                    'transactions.price as price',
-                    'shops.name as shop_name',
-                    'shops.lat as lat',
-                    'shops.lng as lng'
-                )
-                ->where('products.code', $productID)
-                ->get();
-
-            // Periksa apakah hasil query kosong
-            if ($places->isEmpty()) {
-                return response()->json([
-                    'error' => 'No data found for the given Product ID'
-                ], 404); // Not Found
-            }
-
-            // Return the response in plain to be change into GeoJSON format
-            return response()->json($places);
-
-        } catch (\Illuminate\Database\QueryException $e) {
-            // Menangani kesalahan query database
-            return response()->json([
-                'error' => 'Database query error: ' . $e->getMessage()
-            ], 500); // Internal Server Error
-        } catch (\Exception $e) {
-            // Menangani kesalahan umum lainnya
-            return response()->json([
-                'error' => 'An unexpected error occurred: ' . $e->getMessage()
-            ], 500); // Internal Server Error
-        }
-    }
-
     public function rolesBig()
     {
         $roles = Role::all();
@@ -77,7 +39,7 @@ class DataController extends Controller
         $users = User::all();
         return datatables()->of($users)
             ->addColumn('jabatan', function ($user) {
-                return count($user->getRoleNames()) > 0 ? strtoupper(str_replace('_', ' ', $user->getRoleNames()[0]))  : '';
+                return count($user->getRoleNames()) > 0 ? strtoupper(str_replace('_', ' ', $user->getRoleNames()[0])) : '';
             })
             ->addColumn('status', function ($user) {
                 return $user->isOnline() ? 'Online' : 'Offline';
@@ -101,71 +63,40 @@ class DataController extends Controller
             ->toJson();
     }
 
-    // public function transactionsBig()
-    // {
-    //     try {
-    //         // Query to get the data
-    //         $transactions = Transaction::with(['product', 'shop'])
-    //             ->select('id', 'prod_id', 'shop_id', 'price') // Select only necessary columns
-    //             ->get(); // This will return Eloquent models, not plain arrays
+    public function categories()
+    {
+        $categories = KategoriAsetKritis::all();
+        return datatables()->of($categories)
+            ->addColumn('action', 'operator.components.asset-categories-button')
+            ->addIndexColumn()
+            ->rawColumns(['action'])
+            ->toJson();
+    }
 
-    //         // Periksa apakah hasil query kosong
-    //         if ($transactions->isEmpty()) {
-    //             return response()->json([
-    //                 'error' => 'No data found for the given Product ID'
-    //             ], 404); // Not Found
-    //         }
+    public function assets()
+    {
+        $assets = InformasiAsetKritis::select('id', 'id_kategori', 'name', 'deskripsi')->get();
+        // dd($assets);
+        return datatables()->of($assets)
+            ->addColumn('kategori', function ($asset) {
+                return $asset->kategoriAsetKritis->name;
+            })
+            ->addColumn('action', 'operator.components.assets-button')
+            ->addIndexColumn()
+            ->rawColumns(['action'])
+            ->toJson();
+    }
 
-    //         return datatables()->of($transactions)
-    //             ->addColumn('action', 'transactions.components.button-big')
-    //             ->addIndexColumn()
-    //             ->rawColumns(['action'])
-    //             ->toJson();
-
-    //     } catch (\Illuminate\Database\QueryException $e) {
-    //         // Menangani kesalahan query database
-    //         return response()->json([
-    //             'error' => 'Database query error: ' . $e->getMessage()
-    //         ], 500); // Internal Server Error
-    //     } catch (\Exception $e) {
-    //         // Menangani kesalahan umum lainnya
-    //         return response()->json([
-    //             'error' => 'An unexpected error occurred: ' . $e->getMessage()
-    //         ], 500); // Internal Server Error
-    //     }
-    // }
-
-    // public function transactionsSmall()
-    // {
-    //     try {
-    //         // Query to get the data
-    //         $transactions = Transaction::with(['product', 'shop'])
-    //             ->select('id', 'prod_id', 'shop_id', 'price') // Select only necessary columns
-    //             ->get(); // This will return Eloquent models, not plain arrays
-
-    //         // Periksa apakah hasil query kosong
-    //         if ($transactions->isEmpty()) {
-    //             return response()->json([
-    //                 'error' => 'No data found for the given Product ID'
-    //             ], 404); // Not Found
-    //         }
-
-    //         return datatables()->of($transactions)
-    //             ->addColumn('action', 'transactions.components.button-small')
-    //             ->addIndexColumn()
-    //             ->rawColumns(['action'])
-    //             ->toJson();
-
-    //     } catch (\Illuminate\Database\QueryException $e) {
-    //         // Menangani kesalahan query database
-    //         return response()->json([
-    //             'error' => 'Database query error: ' . $e->getMessage()
-    //         ], 500); // Internal Server Error
-    //     } catch (\Exception $e) {
-    //         // Menangani kesalahan umum lainnya
-    //         return response()->json([
-    //             'error' => 'An unexpected error occurred: ' . $e->getMessage()
-    //         ], 500); // Internal Server Error
-    //     }
-    // }
+    public function requirements()
+    {
+        $requirements = PersyaratanKeamanan::all();
+        return datatables()->of($requirements)
+            ->addColumn('aset', function ($requirement) {
+                return $requirement->informasiAsetKritis->name;
+            })
+            ->addColumn('action', 'operator.components.requirements-button')
+            ->addIndexColumn()
+            ->rawColumns(['action'])
+            ->toJson();
+    }
 }

@@ -9,10 +9,10 @@
     <meta name="title" content="Risk Management Information Systems">
 
     <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href={{ asset("img/favicon/apple-touch-icon.png")}}>
-    <link rel="icon" type="image/png" sizes="32x32" href={{ asset("img/favicon/favicon-32x32.png")}}>
-    <link rel="icon" type="image/png" sizes="16x16" href={{ asset("img/favicon/favicon-16x16.png")}}>
-    <link rel="manifest" href={{ asset("img/favicon/site.webmanifest")}}>
+    <link rel="apple-touch-icon" sizes="180x180" href={{ asset('img/favicon/apple-touch-icon.png') }}>
+    <link rel="icon" type="image/png" sizes="32x32" href={{ asset('img/favicon/favicon-32x32.png') }}>
+    <link rel="icon" type="image/png" sizes="16x16" href={{ asset('img/favicon/favicon-16x16.png') }}>
+    <link rel="manifest" href={{ asset('img/favicon/site.webmanifest') }}>
     <link rel="mask-icon" href="{{ asset('img/favicon/safari-pinned-tab.svg') }}" color="#ffffff">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
@@ -84,7 +84,7 @@
 
                 <!--SIDEBAR MENU-->
                 @if (Auth::user()->getRoleNames()[0] == 'admin')
-                    <li class="nav-item {{ Request::routeIs(['admin','admin.roles']) ? 'active' : '' }}">
+                    <li class="nav-item {{ Request::routeIs(['admin', 'admin.roles']) ? 'active' : '' }}">
                         <a href="{{ route('admin.roles') }}" class="nav-link d-flex align-items-center">
                             <span class="sidebar-icon">
                                 <i class="fa-solid fa-user-tie"></i>
@@ -102,13 +102,34 @@
                     </li>
                 @endif
                 @if (Auth::user()->getRoleNames()[0] == 'risk_owner')
-                    
                 @endif
                 @if (Auth::user()->getRoleNames()[0] == 'operator')
-                    
+                    <li class="nav-item {{ Request::routeIs(['operator.asset.categories']) ? 'active' : '' }}">
+                        <a href="{{ route('operator.asset.categories') }}" class="nav-link d-flex align-items-center">
+                            <span class="sidebar-icon">
+                                <i class="fa-solid fa-layer-group"></i>
+                            </span>
+                            <span class="ms-2 sidebar-text">Kategori Aset</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {{ Request::routeIs(['operator.assets']) ? 'active' : '' }}">
+                        <a href="{{ route('operator.assets') }}" class="nav-link d-flex align-items-center">
+                            <span class="sidebar-icon">
+                                <i class="fa-solid fa-list"></i>
+                            </span>
+                            <span class="ms-2 sidebar-text">Aset Kritis</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {{ Request::routeIs(['operator.security.requirements']) ? 'active' : '' }}">
+                        <a href="{{ route('operator.security.requirements') }}" class="nav-link d-flex align-items-center">
+                            <span class="sidebar-icon">
+                                <i class="fa-brands fa-expeditedssl"></i>
+                            </span>
+                            <span class="ms-2 sidebar-text">Persyaratan Keamanan</span>
+                        </a>
+                    </li>
                 @endif
                 @if (Auth::user()->getRoleNames()[0] == 'kepala_upt')
-                    
                 @endif
 
                 {{-- <li class="nav-item {{ Request::routeIs(['products.*']) ? 'active' : '' }}">
@@ -169,21 +190,21 @@
                                 </div>
                             </a>
                             @if (Route::has('logout'))
-                            <div class="dropdown-menu dashboard-dropdown dropdown-menu-end mt-2 py-1">
-                                <form action="{{ (route('logout')) ?? '#' }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item d-flex align-items-center">
-                                        <svg class="dropdown-icon text-danger me-2" fill="none"
-                                            stroke="currentColor" viewBox="0 0 24 24"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-                                            </path>
-                                        </svg>
-                                        Logout
-                                    </button>
-                                </form>
-                            </div>
+                                <div class="dropdown-menu dashboard-dropdown dropdown-menu-end mt-2 py-1">
+                                    <form action="{{ route('logout') ?? '#' }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item d-flex align-items-center">
+                                            <svg class="dropdown-icon text-danger me-2" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                                                </path>
+                                            </svg>
+                                            Logout
+                                        </button>
+                                    </form>
+                                </div>
                             @endif
                         </li>
                     </ul>
@@ -201,15 +222,14 @@
         <footer class="bg-white rounded shadow p-3 mb-4 mt-4">
             <div class="row">
                 <div class="col-12 col-md-8 mb-md-0">
-                    <p class="mb-0 text-center text-lg-start">© 2024-<span class="current-year"></span> <a
-                            class="text-primary fw-normal" href="https://themesberg.com"
-                            target="_blank">Project SIG Lanjut [Sistem Informasi UNTAN]</a></p>
+                    <p class="mb-0 text-center text-lg-start">© 2024-<span class="current-year"></span> Project Manajemen Risiko</p>
                 </div>
                 <div class="col-12 col-md-4 text-center text-lg-start">
                     <!-- List -->
                     <ul class="list-inline list-group-flush list-group-borderless text-md-end mb-0">
                         <li class="list-inline-item px-0 px-sm-2">
-                            <a href="https://github.com/rhagilsetiawan/product-loc"><i class="fa-brands fa-github"></i></a>
+                            <a href="#"><i
+                                    class="fa-brands fa-github"></i></a>
                         </li>
                     </ul>
                 </div>

@@ -5,6 +5,21 @@
 
     <!-- Tambahkan CSS Responsif DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+
+    <style>
+        .table-description-head {
+            overflow: hidden !important;
+            white-space: nowrap;
+        }
+
+        .table-description {
+            max-width: 150px;
+            /* Adjust the width as needed */
+            white-space: nowrap;
+            overflow-x: scroll;
+            /* text-overflow: ellipsis; */
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -25,18 +40,16 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
-                        <div>Operator Kategori Aset</div>
-                        <button type="button" class="btn btn-primary btn-sm float-right" data-bs-toggle="modal"
-                            data-bs-target="#tambahModal">
-                            <i class="fa-solid fa-plus"></i> Tambah Kategori
-                        </button>
+                        <div>Kelola Persyaratan Keamanan</div>
                     </div>
                     <div class="card-body">
-                        <table class="table table-striped" id="tableCategories">
+                        <table class="table table-striped" id="tableAssets">
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Nama</th>
+                                    <th>Aset</th>
+                                    <th>Jenis Prioritas Keamanan</th>
+                                    <th class="table-description-head">Kebutuhan</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -52,30 +65,6 @@
         @method('DELETE')
         <input type="submit" value="Hapus" style="display:none">
     </form>
-    
-    <!-- Modal Tambah-->
-    <div class="modal fade" id="tambahModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-hidden="true" aria-labelledby="tambahRole">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tambahRole">Tambah Kategori Aset</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="tambahRoleForm" action="{{ route('operator.asset.categories.create') }}" method="POST">
-                    <div class="modal-body">
-                        @csrf
-                        <!-- Modal content populated from button attribute -->
-                        <input type="text" class="form-control modal-name" required name="name">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Create</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal Edit-->
     <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -83,16 +72,26 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editLabel">Edit Kategori Aset</h5>
+                    <h5 class="modal-title" id="editLabel">Edit Persyaratan keamananan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="editCategoryForm" action="" method="POST">
+                <form id="editAssetForm" action="" method="POST">
                     <div class="modal-body">
                         @method('PUT')
                         @csrf
-                        <!-- Modal content populated from button attribute -->
                         <input type="hidden" name="id" class="form-control modal-id mb-3">
-                        <input type="text" class="form-control modal-name" required name="name">
+                        <input type="text" disabled name="aset" class="form-control modal-aset mb-3">
+                        <!-- Modal content populated from button attribute -->
+                        <label for="keamananEdit" class="form-label">Jenis Keamanan</label>
+                        <select id="keamananEdit" name="jenis" class="form-select form-control mb-3"
+                            aria-label="Kategori">
+                            <option value="1">Kerahasiaan (Confidentiality)</option>
+                            <option value="2">Integritas (Integrity)</option>
+                            <option value="3">Ketersediaan Informasi (Availability)</option>
+                        </select>
+                        <label for="editKebutuhan" class="form-label">Kebutuhan</label>
+                        <input type="text" id="editKebutuhan" class="form-control modal-kebutuhan mb-3" required
+                            name="kebutuhan">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -113,10 +112,16 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script>
         $(function() {
-            $('#tableCategories').DataTable({
+            $('#tableAssets').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('data.category') }}',
+                ajax: {
+                    url: '{{ route('data.requirements') }}',
+                    dataSrc: function(json) {
+                        console.log(json); // Debugging JSON
+                        return json.data; // Pastikan 'data' sesuai dengan struktur respons JSON
+                    }
+                },
                 responsive: {
                     details: {
                         renderer: function(api, rowIdx, columns) {
@@ -143,27 +148,52 @@
                     }
                 },
                 columns: [{
-                        data: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: true
-                    }, {
-                        data: 'name'
-                    },
-                    {
-                        data: 'action'
+                    data: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: true
+                }, {
+                    data: 'aset'
+                }, {
+                    data: 'jenis',
+                    render: function(data, type, row) {
+                        switch (data) {
+                            case '1':
+                                return '<span class="badge bg-danger">Kerahasiaan (Confidentiality)</span>';
+                            case '2':
+                                return '<span class="badge bg-secondary">Integritas (Integrity)</span>';
+                            case '3':
+                                return '<span class="badge bg-success">Ketersediaan (Availability)</span>';
+                            default:
+                                return '-';
+                        }
                     }
-                ]
+                }, {
+                    data: 'kebutuhan',
+                    className: 'table-description'
+                }, {
+                    data: 'action'
+                }]
             })
         })
 
         const modalElement = document.getElementById('editModal');
         modalElement.addEventListener('show.bs.modal', event => {
+
+            // edit - jenis kemananan sekarang
+            jenis = event.relatedTarget.getAttribute('data-bs-jenis');
+            for (let option of modalElement.querySelector('#keamananEdit').options) {
+                if (option.value === event.relatedTarget.getAttribute('data-bs-jenis')) {
+                    option.selected = true; // Set this option as selected
+                    break; // Exit the loop once found
+                }
+            }
+
             // Update the modal's content
             id = event.relatedTarget.getAttribute('data-bs-id');
-            console.log(id);
-            document.getElementById('editCategoryForm').action = `{{ route('operator.asset.categories.edit', '') }}/${id}`;
+            document.getElementById('editAssetForm').action = `{{ route('operator.security.requirements.edit', '') }}/${id}`;
             modalElement.querySelector('.modal-id').value = id;
-            modalElement.querySelector('.modal-name').value = event.relatedTarget.getAttribute('data-bs-name');
+            modalElement.querySelector('.modal-aset').value = event.relatedTarget.getAttribute('data-bs-aset');
+            modalElement.querySelector('.modal-kebutuhan').value = event.relatedTarget.getAttribute('data-bs-kebutuhan');
         });
     </script>
 @endpush

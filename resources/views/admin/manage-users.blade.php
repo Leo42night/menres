@@ -32,7 +32,7 @@
                         </button>
                     </div>
                     <div class="card-body">
-                        <table class="table table-hovered" id="tableUsers">
+                        <table class="table table-striped" id="tableUsers">
                             <thead>
                                 <tr>
                                     <th>No</th>

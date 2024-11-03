@@ -9,7 +9,7 @@ class InformasiAsetKritis extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['id_kategori', 'nama_aset', 'deskripsi'];
+    protected $fillable = ['id_kategori', 'name', 'deskripsi'];
 
     public function kategoriAsetKritis()
     {
@@ -18,6 +18,6 @@ class InformasiAsetKritis extends Model
 
     public function persyaratanKeamanan()
     {
-        return $this->hasMany(PersyaratanKeamanan::class, 'id_aset');
+        return $this->hasOne(PersyaratanKeamanan::class, 'id_aset');
     }
 }

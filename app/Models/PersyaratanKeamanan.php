@@ -9,7 +9,7 @@ class PersyaratanKeamanan extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['id_aset', 'jenis_persyaratan_keamanan', 'prioritas', 'kebutuhan'];
+    protected $fillable = ['id_aset', 'jenis', 'kebutuhan'];
 
     public function informasiAsetKritis()
     {

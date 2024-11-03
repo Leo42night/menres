@@ -14,7 +14,7 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div>Kepala UPT - Risk Profile</div>
-                        <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm float-right"><i
+                        <a href="/" class="btn btn-primary btn-sm float-right"><i
                                 class="fa-solid fa-plus"></i> Tambah Produk</a>
                     </div>
                     <div class="card-body">
@@ -29,7 +29,7 @@
                                 {{ session('error') }}
                             </div>
                         @endif
-                        <table class="table table-hovered" id="tableProducts">
+                        <table class="table table-striped" id="tableProducts">
                             <thead>
                                 <tr>
                                     <th>No</th>

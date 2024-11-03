@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class KategoriAsetKritis extends Model
 {
     use HasFactory;
-    protected $fillable = ['nama_kategori'];
+    protected $fillable = ['name'];
 
     public function informasiAsetKritis()
     {

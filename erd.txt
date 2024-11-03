@@ -4,22 +4,22 @@ permission:
 - kelola pengguna (admin)
 
 users:
-- type (varchar)->default('')
 - email->unique()
 - password (string)
 - name (varchar 255)
 
 kategori_aset_kritis:
 - nama_kategori (varchar 255)
+Data, Sistem, Hardware, People
 
 informasi_aset_kritis: 
 - id_kategori (relasi ke tabel kategori_aset_kritis)
-- nama_aset (varchar 255)
+- name (varchar 255)
 - deskripsi (varchar 255)
 
 persyaratan_keamanan:
 - id_aset (relasi ke tabel informasi_aset_kritis)
-- jenis_persyaratan_keamanan (enumerate : "kerahasiaan", "Integritas", "Ketersediaan")
+- jenis (enumerate : "kerahasiaan", "Integritas", "Ketersediaan")
 - prioritas (bool)
 - kebutuhan (varchar 255)
 

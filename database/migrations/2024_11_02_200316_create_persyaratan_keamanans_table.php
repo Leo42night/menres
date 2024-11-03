@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('persyaratan_keamanans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_aset')->constrained('informasi_aset_kritis')->onDelete('cascade');
-            $table->enum('jenis_persyaratan_keamanan', ['kerahasiaan', 'integritas', 'ketersediaan']);
-            $table->boolean('prioritas');
-            $table->string('kebutuhan', 255);
+            $table->enum('jenis', ['0', '1', '2', '3'])->default('0'); // 0 undecided, 1 top priority (confidence), 2 mid priority (integrity), 3 low priority (availability)
+            $table->string('kebutuhan', 255)->default('');
             $table->timestamps();
         });
     }
