@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\Product;
-use App\Models\Shop;
-use App\Models\Transaction;
-use Yajra\DataTables\Facades\DataTables;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class DataController extends Controller
 {
@@ -52,120 +50,122 @@ class DataController extends Controller
         }
     }
 
-    public function productsBig()
+    public function rolesBig()
     {
-        $products = Product::latest()->get();
+        $roles = Role::all();
 
-        // var_dump($products);
-        // echo "Type of transactions: " . gettype($products); // This will show the type of the variable
-        // exit();
-
-        return datatables()->of($products)
-            ->addColumn('action', 'products.components.button-big')
-            ->addIndexColumn()
-            ->rawColumns(['action'])
-            ->toJson();
-
-    }
-
-    public function productsSmall()
-    {
-        $products = Product::latest()->get();
-        return datatables()->of($products)
-            ->addColumn('action', 'products.components.button-small')
+        return datatables()->of($roles)
+            ->addColumn('action', 'admin.components.roles-button-big')
             ->addIndexColumn()
             ->rawColumns(['action'])
             ->toJson();
     }
 
-
-
-    public function shopsBig()
+    public function rolesSmall()
     {
-        $shops = Shop::all();
-        return datatables()->of($shops)
-            ->addColumn('action', 'shops.components.button-big')
+        $roles = Role::all();
+
+        return datatables()->of($roles)
+            ->addColumn('action', 'admin.components.roles-button-small')
             ->addIndexColumn()
             ->rawColumns(['action'])
             ->toJson();
     }
 
-    public function shopsSmall()
+    public function usersBig()
     {
-        $shops = Shop::all();
-        return datatables()->of($shops)
-            ->addColumn('action', 'shops.components.button-small')
+        $users = User::all();
+        return datatables()->of($users)
+            ->addColumn('jabatan', function ($user) {
+                return count($user->getRoleNames()) > 0 ? strtoupper(str_replace('_', ' ', $user->getRoleNames()[0]))  : '';
+            })
+            ->addColumn('status', function ($user) {
+                return $user->isOnline() ? 'Online' : 'Offline';
+            })
+            ->addColumn('action', 'admin.components.users-button-big')
             ->addIndexColumn()
             ->rawColumns(['action'])
             ->toJson();
     }
 
-
-    public function transactionsBig()
+    public function usersSmall()
     {
-        try {
-            // Query to get the data
-            $transactions = Transaction::with(['product', 'shop'])
-                ->select('id', 'prod_id', 'shop_id', 'price') // Select only necessary columns
-                ->get(); // This will return Eloquent models, not plain arrays
-
-            // Periksa apakah hasil query kosong
-            if ($transactions->isEmpty()) {
-                return response()->json([
-                    'error' => 'No data found for the given Product ID'
-                ], 404); // Not Found
-            }
-
-            return datatables()->of($transactions)
-                ->addColumn('action', 'transactions.components.button-big')
-                ->addIndexColumn()
-                ->rawColumns(['action'])
-                ->toJson();
-
-        } catch (\Illuminate\Database\QueryException $e) {
-            // Menangani kesalahan query database
-            return response()->json([
-                'error' => 'Database query error: ' . $e->getMessage()
-            ], 500); // Internal Server Error
-        } catch (\Exception $e) {
-            // Menangani kesalahan umum lainnya
-            return response()->json([
-                'error' => 'An unexpected error occurred: ' . $e->getMessage()
-            ], 500); // Internal Server Error
-        }
+        $users = User::all();
+        return datatables()->of($users)
+            ->addColumn('status', function ($user) {
+                return $user->isOnline() ? 'Online' : 'Offline';
+            })
+            ->addColumn('action', 'admin.components.users-button-small')
+            ->addIndexColumn()
+            ->rawColumns(['action'])
+            ->toJson();
     }
 
-    public function transactionsSmall()
-    {
-        try {
-            // Query to get the data
-            $transactions = Transaction::with(['product', 'shop'])
-                ->select('id', 'prod_id', 'shop_id', 'price') // Select only necessary columns
-                ->get(); // This will return Eloquent models, not plain arrays
+    // public function transactionsBig()
+    // {
+    //     try {
+    //         // Query to get the data
+    //         $transactions = Transaction::with(['product', 'shop'])
+    //             ->select('id', 'prod_id', 'shop_id', 'price') // Select only necessary columns
+    //             ->get(); // This will return Eloquent models, not plain arrays
 
-            // Periksa apakah hasil query kosong
-            if ($transactions->isEmpty()) {
-                return response()->json([
-                    'error' => 'No data found for the given Product ID'
-                ], 404); // Not Found
-            }
+    //         // Periksa apakah hasil query kosong
+    //         if ($transactions->isEmpty()) {
+    //             return response()->json([
+    //                 'error' => 'No data found for the given Product ID'
+    //             ], 404); // Not Found
+    //         }
 
-            return datatables()->of($transactions)
-                ->addColumn('action', 'transactions.components.button-small')
-                ->addIndexColumn()
-                ->rawColumns(['action'])
-                ->toJson();
+    //         return datatables()->of($transactions)
+    //             ->addColumn('action', 'transactions.components.button-big')
+    //             ->addIndexColumn()
+    //             ->rawColumns(['action'])
+    //             ->toJson();
 
-        } catch (\Illuminate\Database\QueryException $e) {
-            // Menangani kesalahan query database
-            return response()->json([
-                'error' => 'Database query error: ' . $e->getMessage()
-            ], 500); // Internal Server Error
-        } catch (\Exception $e) {
-            // Menangani kesalahan umum lainnya
-            return response()->json([
-                'error' => 'An unexpected error occurred: ' . $e->getMessage()
-            ], 500); // Internal Server Error
-        }
-    }
+    //     } catch (\Illuminate\Database\QueryException $e) {
+    //         // Menangani kesalahan query database
+    //         return response()->json([
+    //             'error' => 'Database query error: ' . $e->getMessage()
+    //         ], 500); // Internal Server Error
+    //     } catch (\Exception $e) {
+    //         // Menangani kesalahan umum lainnya
+    //         return response()->json([
+    //             'error' => 'An unexpected error occurred: ' . $e->getMessage()
+    //         ], 500); // Internal Server Error
+    //     }
+    // }
+
+    // public function transactionsSmall()
+    // {
+    //     try {
+    //         // Query to get the data
+    //         $transactions = Transaction::with(['product', 'shop'])
+    //             ->select('id', 'prod_id', 'shop_id', 'price') // Select only necessary columns
+    //             ->get(); // This will return Eloquent models, not plain arrays
+
+    //         // Periksa apakah hasil query kosong
+    //         if ($transactions->isEmpty()) {
+    //             return response()->json([
+    //                 'error' => 'No data found for the given Product ID'
+    //             ], 404); // Not Found
+    //         }
+
+    //         return datatables()->of($transactions)
+    //             ->addColumn('action', 'transactions.components.button-small')
+    //             ->addIndexColumn()
+    //             ->rawColumns(['action'])
+    //             ->toJson();
+
+    //     } catch (\Illuminate\Database\QueryException $e) {
+    //         // Menangani kesalahan query database
+    //         return response()->json([
+    //             'error' => 'Database query error: ' . $e->getMessage()
+    //         ], 500); // Internal Server Error
+    //     } catch (\Exception $e) {
+    //         // Menangani kesalahan umum lainnya
+    //         return response()->json([
+    //             'error' => 'An unexpected error occurred: ' . $e->getMessage()
+    //         ], 500); // Internal Server Error
+    //     }
+    // }
 }

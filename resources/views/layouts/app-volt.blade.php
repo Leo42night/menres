@@ -3,23 +3,27 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Primary Meta Tags -->
-    <title>Laravel & LeafletJs</title>
+    <title>Manajemen Risiko</title>
 
     <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('img/apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('img/favicon-16x16.png') }}">
-    <link rel="mask-icon" href="{{ asset('img/safari-pinned-tab.svg') }}" color="#ffffff">
+    <link rel="apple-touch-icon" sizes="180x180" href={{ asset("img/favicon/apple-touch-icon.png")}}>
+    <link rel="icon" type="image/png" sizes="32x32" href={{ asset("img/favicon/favicon-32x32.png")}}>
+    <link rel="icon" type="image/png" sizes="16x16" href={{ asset("img/favicon/favicon-16x16.png")}}>
+    <link rel="manifest" href={{ asset("img/favicon/site.webmanifest")}}>
+    <link rel="mask-icon" href="{{ asset('img/favicon/safari-pinned-tab.svg') }}" color="#ffffff">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
 
     <!-- Sweet Alert -->
-    <link type="text/css" href="{{ asset('sweetalert2/dist/sweetalert2.min.css') }}"
-        rel="stylesheet">
+    <link type="text/css" href="{{ asset('sweetalert2/dist/sweetalert2.min.css') }}" rel="stylesheet">
 
     <!-- Volt CSS -->
     <link type="text/css" href="{{ asset('css/volt.css') }}" rel="stylesheet">
+
+    {{-- tailwindcss --}}
+    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
 
     @yield('styles')
 
@@ -28,7 +32,7 @@
 <body>
     <main>
         <!-- Section -->
-        <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
+        <section class="vh-lg-100 mt-lg-0 bg-soft d-flex align-items-center">
             @yield('content')
         </section>
     </main>

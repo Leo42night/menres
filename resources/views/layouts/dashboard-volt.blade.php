@@ -4,13 +4,16 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <!-- Primary Meta Tags -->
-    <title>GIS Leaflet Project</title>
+    <title>Risk Management Information Systems</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="title" content="GIS Leaflet Project">
+    <meta name="title" content="Risk Management Information Systems">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('img/favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href={{ asset("img/favicon/apple-touch-icon.png")}}>
+    <link rel="icon" type="image/png" sizes="32x32" href={{ asset("img/favicon/favicon-32x32.png")}}>
+    <link rel="icon" type="image/png" sizes="16x16" href={{ asset("img/favicon/favicon-16x16.png")}}>
+    <link rel="manifest" href={{ asset("img/favicon/site.webmanifest")}}>
+    <link rel="mask-icon" href="{{ asset('img/favicon/safari-pinned-tab.svg') }}" color="#ffffff">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="theme-color" content="#ffffff">
 
@@ -29,8 +32,8 @@
 
 <body>
     <nav class="navbar navbar-dark navbar-theme-primary px-4 col-12 d-lg-none">
-        <a class="navbar-brand me-lg-5" href="../../index.html">
-            <img class="navbar-brand-dark" src="{{ asset('img/light.svg') }}" alt="Volt logo" />
+        <a class="navbar-brand me-lg-5" href="/">
+            <img class="navbar-brand-dark" src="{{ asset('img/light.svg') }}" alt="Risk Management logo" />
         </a>
         <div class="d-flex align-items-center">
             <button class="navbar-toggler d-lg-none collapsed" type="button" data-bs-toggle="collapse"
@@ -75,20 +78,40 @@
                         <span class="sidebar-icon">
                             <img src="{{ asset('img/light.svg') }}" height="20" width="20" alt="SIG Logo">
                         </span>
-                        <span class="mt-1 ms-1 sidebar-text">GIS Location</span>
+                        <span class="mt-1 ms-1 sidebar-text fw-bold">Risk Management</span>
                     </a>
                 </li>
 
                 <!--SIDEBAR MENU-->
-                <li class="nav-item {{ Request::routeIs(['welcome', 'dashboard']) ? 'active' : '' }}">
-                    <a href="{{ route('dashboard') }}" class="nav-link d-flex align-items-center">
-                        <span class="sidebar-icon">
-                            <i class="fa-solid fa-barcode"></i>
-                        </span>
-                        <span class="ms-2 sidebar-text">Cari Produk</span>
-                    </a>
-                </li>
-                <li class="nav-item {{ Request::routeIs(['products.*']) ? 'active' : '' }}">
+                @if (Auth::user()->getRoleNames()[0] == 'admin')
+                    <li class="nav-item {{ Request::routeIs(['admin','admin.roles']) ? 'active' : '' }}">
+                        <a href="{{ route('admin.roles') }}" class="nav-link d-flex align-items-center">
+                            <span class="sidebar-icon">
+                                <i class="fa-solid fa-user-tie"></i>
+                            </span>
+                            <span class="ms-2 sidebar-text">Kelola Jabatan</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {{ Request::routeIs(['admin.users']) ? 'active' : '' }}">
+                        <a href="{{ route('admin.users') }}" class="nav-link d-flex align-items-center">
+                            <span class="sidebar-icon">
+                                <i class="fa-solid fa-users"></i>
+                            </span>
+                            <span class="ms-2 sidebar-text">Kelola User</span>
+                        </a>
+                    </li>
+                @endif
+                @if (Auth::user()->getRoleNames()[0] == 'risk_owner')
+                    
+                @endif
+                @if (Auth::user()->getRoleNames()[0] == 'operator')
+                    
+                @endif
+                @if (Auth::user()->getRoleNames()[0] == 'kepala_upt')
+                    
+                @endif
+
+                {{-- <li class="nav-item {{ Request::routeIs(['products.*']) ? 'active' : '' }}">
                     <a href="{{ route('products.index') }}" class="nav-link d-flex align-items-center">
                         <span class="sidebar-icon">
                             <i class="fa-solid fa-box"></i>
@@ -111,7 +134,7 @@
                         </span>
                         <span class="ms-2 sidebar-text">Toko</span>
                     </a>
-                </li>
+                </li> --}}
 
                 <li role="separator" class="dropdown-divider mt-4 mb-3 border-gray-700"></li>
             </ul>
