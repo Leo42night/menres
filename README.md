@@ -1,5 +1,5 @@
 Fitur:
-- Kelola user
+- Kelola user & Role nya
 - dashboard kalkulasi risiko
 - kelola kategori aset
 - kelola aset risiko
